@@ -10,6 +10,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/logging.h"
+#include "base/memory/ref_counted.h"
 #include "base/strings/sys_string_conversions.h"
 #include "brave/components/brave_wallet/browser/erc_token_registry.h"
 #include "brave/ios/app/brave_main_delegate.h"
@@ -17,10 +18,12 @@
 #include "brave/ios/browser/api/brave_wallet/brave_wallet.mojom.objc+private.h"
 #include "brave/ios/browser/api/history/brave_history_api+private.h"
 #include "brave/ios/browser/api/sync/brave_sync_api+private.h"
+#include "brave/ios/browser/api/password/brave_password_api+private.h"
 #include "brave/ios/browser/api/sync/driver/brave_sync_profile_service+private.h"
 #include "brave/ios/browser/brave_web_client.h"
 #include "components/history/core/browser/history_service.h"
 #include "components/keyed_service/core/service_access_type.h"
+#include "components/password_manager/core/browser/password_store.h"
 #include "ios/chrome/app/startup/provider_registration.h"
 #include "ios/chrome/app/startup_tasks.h"
 #include "ios/chrome/browser/application_context.h"
@@ -30,6 +33,7 @@
 #include "ios/chrome/browser/history/history_service_factory.h"
 #include "ios/chrome/browser/history/web_history_service_factory.h"
 #include "ios/chrome/browser/sync/sync_service_factory.h"
+#include "ios/chrome/browser/passwords/ios_chrome_password_store_factory.h"
 #include "ios/chrome/browser/undo/bookmark_undo_service_factory.h"
 #include "ios/public/provider/chrome/browser/chrome_browser_provider.h"
 #include "ios/web/public/init/web_main.h"
@@ -46,6 +50,7 @@ static BraveCoreLogHandler _Nullable _logHandler = nil;
 }
 @property(nonatomic) BraveBookmarksAPI* bookmarksAPI;
 @property(nonatomic) BraveHistoryAPI* historyAPI;
+@property(nonatomic) BravePasswordAPI* passwordAPI;
 @property(nonatomic) BraveSyncAPI* syncAPI;
 @property(nonatomic) BraveSyncProfileServiceIOS* syncProfileService;
 @end
@@ -186,6 +191,19 @@ static bool CustomLogHandler(int severity,
     _syncAPI = [[BraveSyncAPI alloc] initWithBrowserState:_mainBrowserState];
   }
   return _syncAPI;
+}
+
+- (BravePasswordAPI*)passwordAPI {
+  if (!_passwordAPI) {
+    scoped_refptr<password_manager::PasswordStore> password_store_ =
+        IOSChromePasswordStoreFactory::GetForBrowserState(
+            _mainBrowserState, ServiceAccessType::EXPLICIT_ACCESS)
+            .get();
+
+    _passwordAPI =
+        [[BravePasswordAPI alloc] initWithPasswordStore:password_store_];
+  }
+  return _passwordAPI;
 }
 
 - (BraveSyncProfileServiceIOS*)syncProfileService {
