@@ -224,7 +224,7 @@ public class NTPUtil {
         //     }
         // }
 
-        int topMargin = correctImageCreditLayoutTopPosition(ntpImage);
+        int topMargin = 100;// correctImageCreditLayoutTopPosition(ntpImage);
 
         imageCreditLayoutParams.setMargins(0, topMargin, 0, 0);
         // imageCreditLayoutParams.setMargins(0, displayMetrics.heightPixels, 0, 0);

@@ -148,7 +148,10 @@ public class BraveAddNewsSources
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Log.d("bn", "adding sources...");
-
+                    if (mBraveNewsController != null){
+                        //  SetPublisherPref(string publisher_id, UserEnabled new_status);
+                        // mBraveNewsController.setPublisherPref();
+                    }
                     ArrayList<Preference> list =
                             getPreferenceList(sourcesScreen, new ArrayList<Preference>());
                     for (Preference p : list) {
