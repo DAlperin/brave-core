@@ -98,5 +98,6 @@ extern const char kSafetynetStatus[];
 extern const char kDefaultBrowserLaunchingCount[];
 extern const char kTabsSearchShow[];
 extern const char kDontAskForCrashReporting[];
+extern const char kEnableMediaRouterOnRestart[];
 
 #endif  // BRAVE_COMMON_PREF_NAMES_H_

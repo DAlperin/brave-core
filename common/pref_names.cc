@@ -101,6 +101,13 @@ const char kMRUCyclingEnabled[] = "brave.mru_cycling_enabled";
 const char kTabsSearchShow[] = "brave.tabs_search_show";
 const char kDontAskForCrashReporting[] = "brave.dont_ask_for_crash_reporting";
 
+// Cast extension requires a browser restart once the setting is toggled.
+// kEnableMediaRouterOnRestart is used as a proxy to identify the current
+// state of the switch and prefs::kEnableMediaRouter is updated to
+// kEnableMediaRouterOnRestart on restart.
+const char kEnableMediaRouterOnRestart[] =
+    "brave.enable_media_router_on_restart";
+
 #if defined(OS_ANDROID)
 const char kDesktopModeEnabled[] = "brave.desktop_mode_enabled";
 const char kPlayYTVideoInBrowserEnabled[] =
