@@ -53,7 +53,7 @@ EthereumRemoteClientService::EthereumRemoteClientService(
   pref_change_registrar_ = std::make_unique<PrefChangeRegistrar>();
   pref_change_registrar_->Init(user_prefs::UserPrefs::Get(context_));
   pref_change_registrar_->Add(
-      kBraveWalletWeb3Provider,
+      kDefaultWallet,
       base::BindRepeating(&EthereumRemoteClientService::OnPreferenceChanged,
                           base::Unretained(this)));
   // In case any web3 providers have already loaded content scripts at
@@ -271,7 +271,7 @@ void EthereumRemoteClientService::RemoveUnusedWeb3ProviderContentScripts() {
   }
   auto* registry = extensions::ExtensionRegistry::Get(context_);
   auto provider = static_cast<brave_wallet::Web3ProviderTypes>(
-      prefs->GetInteger(kBraveWalletWeb3Provider));
+      prefs->GetInteger(kDefaultWallet));
 
   auto* erc_extension = registry->enabled_extensions().GetByID(
       ethereum_remote_client_extension_id);
@@ -317,7 +317,7 @@ void EthereumRemoteClientService::OnExtensionInstalled(
   if (extension->id() == metamask_extension_id && !is_update) {
     PrefService* prefs = user_prefs::UserPrefs::Get(context_);
     prefs->SetInteger(
-        kBraveWalletWeb3Provider,
+        kDefaultWallet,
         static_cast<int>(brave_wallet::Web3ProviderTypes::METAMASK));
     RemoveUnusedWeb3ProviderContentScripts();
   }
@@ -349,10 +349,10 @@ void EthereumRemoteClientService::OnExtensionUninstalled(
   if (extension->id() == metamask_extension_id) {
     PrefService* prefs = user_prefs::UserPrefs::Get(context_);
     auto provider = static_cast<brave_wallet::Web3ProviderTypes>(
-        prefs->GetInteger(kBraveWalletWeb3Provider));
+        prefs->GetInteger(kDefaultWallet));
     if (provider == brave_wallet::Web3ProviderTypes::METAMASK)
       prefs->SetInteger(
-          kBraveWalletWeb3Provider,
+          kDefaultWallet,
           static_cast<int>(
               brave_wallet::IsNativeWalletEnabled()
                   ? brave_wallet::Web3ProviderTypes::BRAVE_WALLET
@@ -387,7 +387,7 @@ bool EthereumRemoteClientService::IsCryptoWalletsReady() const {
 bool EthereumRemoteClientService::ShouldShowLazyLoadInfobar() const {
   PrefService* prefs = user_prefs::UserPrefs::Get(context_);
   auto provider = static_cast<brave_wallet::Web3ProviderTypes>(
-      prefs->GetInteger(kBraveWalletWeb3Provider));
+      prefs->GetInteger(kDefaultWallet));
   return provider == brave_wallet::Web3ProviderTypes::CRYPTO_WALLETS &&
          !IsCryptoWalletsReady();
 }

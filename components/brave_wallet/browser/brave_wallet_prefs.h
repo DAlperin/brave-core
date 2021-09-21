@@ -18,6 +18,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry);
 void RegisterProfilePrefsForMigration(
     user_prefs::PrefRegistrySyncable* registry);
 void ClearProfilePrefs(PrefService* prefs);
+void MigrateObsoleteBraveWalletProfilePrefs(PrefService* prefs);
 
 }  // namespace brave_wallet
 

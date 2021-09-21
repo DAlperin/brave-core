@@ -6,7 +6,7 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_PREF_NAMES_H_
 #define BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_PREF_NAMES_H_
 
-extern const char kBraveWalletWeb3Provider[];
+extern const char kDefaultWallet[];
 extern const char kBraveWalletTransactions[];
 extern const char kShowWalletIconOnToolbar[];
 extern const char kBraveWalletLastUnlockTime[];
@@ -16,6 +16,7 @@ extern const char kBraveWalletCurrentChainId[];
 extern const char kBraveWalletUserAssets[];
 
 // DEPRECATED
+extern const char kBraveWalletWeb3ProviderDeprecated[];
 extern const char kBraveWalletPasswordEncryptorSalt[];
 extern const char kBraveWalletPasswordEncryptorNonce[];
 extern const char kBraveWalletEncryptedMnemonic[];

@@ -107,7 +107,7 @@ IN_PROC_BROWSER_TEST_F(BraveProfilePrefsBrowserTest, MiscBravePrefs) {
 #endif
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)
   EXPECT_EQ(chrome_test_utils::GetProfile(this)->GetPrefs()->GetInteger(
-                kBraveWalletWeb3Provider),
+                kDefaultWallet),
             static_cast<int>(brave_wallet::IsNativeWalletEnabled()
                                  ? brave_wallet::Web3ProviderTypes::BRAVE_WALLET
                                  : brave_wallet::Web3ProviderTypes::ASK));

@@ -113,12 +113,12 @@ BraveWalletLoadUIFunction::Run() {
   // set the Dapp provider to Crypto Wallets.
   Profile* profile = Profile::FromBrowserContext(browser_context());
   auto provider = static_cast<::brave_wallet::Web3ProviderTypes>(
-      profile->GetPrefs()->GetInteger(kBraveWalletWeb3Provider));
+      profile->GetPrefs()->GetInteger(kDefaultWallet));
   auto* registry = extensions::ExtensionRegistry::Get(profile);
   if (!registry->ready_extensions().Contains(metamask_extension_id) &&
       provider != ::brave_wallet::Web3ProviderTypes::BRAVE_WALLET) {
     profile->GetPrefs()->SetInteger(
-        kBraveWalletWeb3Provider,
+        kDefaultWallet,
         static_cast<int>(::brave_wallet::Web3ProviderTypes::CRYPTO_WALLETS));
   }
   profile->GetPrefs()->SetBoolean(kERCOptedIntoCryptoWallets, true);
@@ -210,7 +210,7 @@ ExtensionFunction::ResponseAction
 BraveWalletGetWeb3ProviderFunction::Run() {
   Profile* profile = Profile::FromBrowserContext(browser_context());
   auto provider = static_cast<::brave_wallet::Web3ProviderTypes>(
-      profile->GetPrefs()->GetInteger(kBraveWalletWeb3Provider));
+      profile->GetPrefs()->GetInteger(kDefaultWallet));
   std::string extension_id;
   if (provider == ::brave_wallet::Web3ProviderTypes::BRAVE_WALLET) {
     // This API is used so an extension can know when to prompt to

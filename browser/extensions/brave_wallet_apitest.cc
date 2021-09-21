@@ -96,7 +96,7 @@ IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
 IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
     BraveWalletWeb3ProviderCryptoWallets) {
   GetPrefs()->SetInteger(
-      kBraveWalletWeb3Provider,
+      kDefaultWallet,
       static_cast<int>(brave_wallet::Web3ProviderTypes::CRYPTO_WALLETS));
   ResultCatcher catcher;
   const Extension* extension =
@@ -111,7 +111,7 @@ IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
 IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
     BraveWalletWeb3ProviderMetaMask) {
   GetPrefs()->SetInteger(
-      kBraveWalletWeb3Provider,
+      kDefaultWallet,
       static_cast<int>(brave_wallet::Web3ProviderTypes::METAMASK));
   ResultCatcher catcher;
   const Extension* extension =
@@ -126,8 +126,7 @@ IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
 IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
     BraveWalletWeb3ProviderAsk) {
   GetPrefs()->SetInteger(
-      kBraveWalletWeb3Provider,
-      static_cast<int>(brave_wallet::Web3ProviderTypes::ASK));
+      kDefaultWallet, static_cast<int>(brave_wallet::Web3ProviderTypes::ASK));
   ResultCatcher catcher;
   const Extension* extension =
     LoadExtension(extension_dir_.AppendASCII("braveWallet"));
@@ -141,8 +140,7 @@ IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
 IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
     BraveWalletWeb3ProviderNone) {
   GetPrefs()->SetInteger(
-      kBraveWalletWeb3Provider,
-      static_cast<int>(brave_wallet::Web3ProviderTypes::NONE));
+      kDefaultWallet, static_cast<int>(brave_wallet::Web3ProviderTypes::NONE));
   ResultCatcher catcher;
   const Extension* extension =
     LoadExtension(extension_dir_.AppendASCII("braveWallet"));
@@ -156,7 +154,7 @@ IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
 IN_PROC_BROWSER_TEST_F(BraveWalletExtensionApiTest,
                        BraveWalletWeb3ProviderBraveWallet) {
   GetPrefs()->SetInteger(
-      kBraveWalletWeb3Provider,
+      kDefaultWallet,
       static_cast<int>(brave_wallet::Web3ProviderTypes::BRAVE_WALLET));
   ResultCatcher catcher;
   const Extension* extension =

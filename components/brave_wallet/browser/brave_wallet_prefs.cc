@@ -52,7 +52,7 @@ namespace brave_wallet {
 
 void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   registry->RegisterIntegerPref(
-      kBraveWalletWeb3Provider,
+      kDefaultWallet,
       static_cast<int>(brave_wallet::IsNativeWalletEnabled()
                            ? brave_wallet::Web3ProviderTypes::BRAVE_WALLET
                            : brave_wallet::Web3ProviderTypes::ASK));
@@ -79,6 +79,12 @@ void RegisterProfilePrefsForMigration(
   registry->RegisterIntegerPref(kBraveWalletDefaultKeyringAccountNum, 0);
   registry->RegisterBooleanPref(kBraveWalletBackupComplete, false);
   registry->RegisterListPref(kBraveWalletAccountNames);
+  // Added 09/2021
+  registry->RegisterIntegerPref(
+      kBraveWalletWeb3ProviderDeprecated,
+      static_cast<int>(brave_wallet::IsNativeWalletEnabled()
+                           ? brave_wallet::Web3ProviderTypes::BRAVE_WALLET
+                           : brave_wallet::Web3ProviderTypes::ASK));
 }
 
 void ClearProfilePrefs(PrefService* prefs) {
@@ -88,6 +94,24 @@ void ClearProfilePrefs(PrefService* prefs) {
   prefs->ClearPref(kBraveWalletTransactions);
   prefs->ClearPref(kBraveWalletUserAssets);
   prefs->ClearPref(kBraveWalletKeyrings);
+}
+
+void MigrateObsoleteBraveWalletProfilePrefs(PrefService* prefs) {
+  if (prefs->HasPrefPath(kBraveWalletWeb3ProviderDeprecated)) {
+    Web3ProviderTypes provider = static_cast<Web3ProviderTypes>(
+        prefs->GetInteger(kBraveWalletWeb3ProviderDeprecated));
+    Web3ProviderTypes default_wallet = provider;
+    if (IsNativeWalletEnabled() &&
+        (provider == Web3ProviderTypes::ASK ||
+         provider == Web3ProviderTypes::CRYPTO_WALLETS)) {
+      default_wallet = Web3ProviderTypes::BRAVE_WALLET;
+    } else if (!IsNativeWalletEnabled() &&
+               provider == Web3ProviderTypes::BRAVE_WALLET) {
+      default_wallet = Web3ProviderTypes::ASK;
+    }
+    prefs->SetInteger(kDefaultWallet, static_cast<int>(default_wallet));
+    prefs->ClearPref(kBraveWalletWeb3ProviderDeprecated);
+  }
 }
 
 }  // namespace brave_wallet

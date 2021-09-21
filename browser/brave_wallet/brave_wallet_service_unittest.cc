@@ -6,10 +6,13 @@
 #include "brave/components/brave_wallet/browser/brave_wallet_service.h"
 
 #include "base/test/bind.h"
+#include "base/test/scoped_feature_list.h"
+#include "brave/components/brave_wallet/browser/brave_wallet_constants.h"
 #include "brave/components/brave_wallet/browser/erc_token_list_parser.h"
 #include "brave/components/brave_wallet/browser/erc_token_registry.h"
 #include "brave/components/brave_wallet/browser/pref_names.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
+#include "brave/components/brave_wallet/common/features.h"
 #include "chrome/browser/prefs/browser_prefs.h"
 #include "chrome/test/base/testing_browser_process.h"
 #include "chrome/test/base/testing_profile.h"

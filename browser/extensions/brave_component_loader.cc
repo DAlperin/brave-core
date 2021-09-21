@@ -166,7 +166,7 @@ void BraveComponentLoader::AddEthereumRemoteClientExtension() {
 void BraveComponentLoader::AddEthereumRemoteClientExtensionOnStartup() {
   // Only load Crypto Wallets if it is set as the default wallet
   auto provider = static_cast<brave_wallet::Web3ProviderTypes>(
-      profile_prefs_->GetInteger(kBraveWalletWeb3Provider));
+      profile_prefs_->GetInteger(kDefaultWallet));
 
   if (HasInfuraProjectID() &&
       provider == brave_wallet::Web3ProviderTypes::CRYPTO_WALLETS) {

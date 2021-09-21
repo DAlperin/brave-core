@@ -8,8 +8,6 @@
 
 extern const char kERCAES256GCMSivNonce[];
 extern const char kERCEncryptedSeed[];
-// Deprecated in favor of kBraveWalletWeb3Provider
-extern const char kERCEnabledDeprecated[];
 extern const char kERCPrefVersion[];
 extern const char kERCOptedIntoCryptoWallets[];
 

@@ -10,6 +10,7 @@
 
 #include "base/strings/string_util.h"
 #include "base/values.h"
+#include "brave/components/brave_wallet/browser/brave_wallet_constants.h"
 #include "brave/components/brave_wallet/browser/brave_wallet_utils.h"
 #include "brave/components/brave_wallet/browser/eth_address.h"
 #include "brave/components/brave_wallet/browser/pref_names.h"
