@@ -323,7 +323,7 @@ void EthereumRemoteClientService::OnExtensionInstalled(
   }
 }
 
-void EthereumRemoteClientService::OnExtensionLoaded(
+void EthereumRemoteClientService::OnExtensionReady(
     content::BrowserContext* browser_context,
     const extensions::Extension* extension) {
   if (extension->id() == metamask_extension_id ||
