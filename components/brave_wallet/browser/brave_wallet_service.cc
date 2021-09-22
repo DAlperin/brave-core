@@ -8,8 +8,10 @@
 #include <utility>
 #include <vector>
 
+#include "base/metrics/histogram_macros.h"
 #include "base/strings/string_util.h"
 #include "base/values.h"
+#include "brave/components/brave_stats/browser/brave_stats_updater_util.h"
 #include "brave/components/brave_wallet/browser/brave_wallet_importer_delegate.h"
 #include "brave/components/brave_wallet/browser/brave_wallet_utils.h"
 #include "brave/components/brave_wallet/browser/eth_address.h"
@@ -92,6 +94,12 @@ BraveWalletService::BraveWalletService(
     PrefService* prefs)
     : delegate_(std::move(delegate)), prefs_(prefs) {
   DCHECK(prefs_);
+
+  pref_change_registrar_.Init(prefs_);
+  pref_change_registrar_.Add(
+      kBraveWalletLastUnlockTime,
+      base::BindRepeating(&BraveWalletService::OnWalletUnlockPreferenceChanged,
+                          base::Unretained(this)));
 }
 
 BraveWalletService::~BraveWalletService() = default;
@@ -361,6 +369,27 @@ void BraveWalletService::SetDefaultWallet(mojom::DefaultWallet default_wallet) {
   ::brave_wallet::SetDefaultWallet(prefs_, default_wallet);
 }
 
-void BraveWalletService::OnStatsPingFired() {}
+void BraveWalletService::OnStatsPingFired() {
+  RecordWalletUsage();
+}
+
+void BraveWalletService::OnWalletUnlockPreferenceChanged(
+    const std::string& pref_name) {
+  RecordWalletUsage();
+}
+
+void BraveWalletService::RecordWalletUsage() {
+  base::Time wallet_last_used = prefs_->GetTime(kBraveWalletLastUnlockTime);
+  uint8_t usage = brave_stats::UsageBitstringFromTimestamp(wallet_last_used);
+
+  bool daily = !!(usage & brave_stats::IsDailyUser);
+  UMA_HISTOGRAM_BOOLEAN("Brave.Wallet.UsageDaily", daily);
+
+  bool weekly = !!(usage & brave_stats::IsWeeklyUser);
+  UMA_HISTOGRAM_BOOLEAN("Brave.Wallet.UsageWeekly", weekly);
+
+  bool monthly = !!(usage & brave_stats::IsMonthlyUser);
+  UMA_HISTOGRAM_BOOLEAN("Brave.Wallet.UsageMonthly", monthly);
+}
 
 }  // namespace brave_wallet
