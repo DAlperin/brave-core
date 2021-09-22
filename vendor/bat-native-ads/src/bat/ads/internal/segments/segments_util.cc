@@ -15,6 +15,7 @@
 #include "bat/ads/internal/catalog/catalog_creative_set_info_aliases.h"
 #include "bat/ads/internal/client/client.h"
 #include "bat/ads/internal/client/preferences/filtered_category_info.h"
+#include "bat/ads/internal/logging.h"
 
 namespace ads {
 
@@ -80,6 +81,11 @@ SegmentList GetParentSegments(const SegmentList& segments) {
   SegmentList parent_segments;
 
   for (const auto& segment : segments) {
+    if (segment.empty()) {
+      BLOG(0, "Ads segment shouldn't be empty.");
+      continue;
+    }
+
     const std::string parent_segment = GetParentSegment(segment);
     parent_segments.push_back(parent_segment);
   }
@@ -110,7 +116,10 @@ bool ParentSegmentsMatch(const std::string& lhs, const std::string& rhs) {
 }
 
 bool ShouldFilterSegment(const std::string& segment) {
-  DCHECK(!segment.empty());
+  if (segment.empty()) {
+    BLOG(0, "Ads segment shouldn't be empty.");
+    return true;
+  }
 
   const FilteredCategoryList filtered_segments =
       Client::Get()->GetFilteredCategories();
@@ -122,6 +131,11 @@ bool ShouldFilterSegment(const std::string& segment) {
   const auto iter = std::find_if(
       filtered_segments.begin(), filtered_segments.end(),
       [&segment](const FilteredCategoryInfo& filtered_segment) {
+        if (filtered_segment.name.empty()) {
+          BLOG(0, "Ads filtered category shouldn't be empty.");
+          return false;
+        }
+
         if (HasChildSegment(filtered_segment.name)) {
           // Filter against parent-child, i.e. "technology & computing-linux"
           return segment == filtered_segment.name;
