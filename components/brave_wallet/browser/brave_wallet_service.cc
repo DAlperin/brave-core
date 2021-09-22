@@ -361,4 +361,6 @@ void BraveWalletService::SetDefaultWallet(mojom::DefaultWallet default_wallet) {
   ::brave_wallet::SetDefaultWallet(prefs_, default_wallet);
 }
 
+void BraveWalletService::OnStatsPingFired() {}
+
 }  // namespace brave_wallet
