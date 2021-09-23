@@ -348,6 +348,7 @@ class RewardsServiceImpl : public RewardsService,
   void SetLedgerEnvForTesting();
   void PrepareLedgerEnvForTesting();
   void StartMonthlyContributionForTest();
+  void ContributeUnverifiedPublishers() override;
   void MaybeShowNotificationAddFundsForTesting(
       base::OnceCallback<void(bool)> callback);
   void CheckInsufficientFundsForTesting();

@@ -132,6 +132,7 @@ class BatLedgerImpl :
       const std::string& publisher_key,
       RefreshPublisherCallback callback) override;
   void StartMonthlyContribution() override;
+  void ContributeUnverifiedPublishers() override;
 
   void SaveRecurringTip(
       ledger::type::RecurringTipPtr info,

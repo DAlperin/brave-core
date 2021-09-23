@@ -632,6 +632,10 @@ void LedgerImpl::StartMonthlyContribution() {
   WhenReady([this]() { contribution()->StartMonthlyContribution(); });
 }
 
+void LedgerImpl::ContributeUnverifiedPublishers() {
+  WhenReady([this]() { contribution()->ContributeUnverifiedPublishers(); });
+}
+
 void LedgerImpl::SaveMediaInfo(
     const std::string& type,
     const base::flat_map<std::string, std::string>& data,

@@ -214,6 +214,8 @@ class LedgerImpl : public Ledger {
 
   void StartMonthlyContribution() override;
 
+  void ContributeUnverifiedPublishers() override;
+
   void SaveMediaInfo(const std::string& type,
                      const base::flat_map<std::string, std::string>& data,
                      PublisherInfoCallback callback) override;

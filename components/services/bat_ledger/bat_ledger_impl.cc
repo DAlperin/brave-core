@@ -689,6 +689,10 @@ void BatLedgerImpl::StartMonthlyContribution() {
   ledger_->StartMonthlyContribution();
 }
 
+void BatLedgerImpl::ContributeUnverifiedPublishers() {
+  ledger_->ContributeUnverifiedPublishers();
+}
+
 void BatLedgerImpl::SetInlineTippingPlatformEnabled(
     const ledger::type::InlineTipsPlatforms platform,
     bool enabled) {

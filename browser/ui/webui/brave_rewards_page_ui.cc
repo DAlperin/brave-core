@@ -622,6 +622,8 @@ void RewardsDOMHandler::OnExternalWalletTypeUpdated(
     CallJavascriptFunction("brave_rewards.externalWalletLogin",
                            base::Value(wallet ? wallet->login_url : ""));
   }
+
+  //rewards_service_->ContributeUnverifiedPublishers();
 }
 
 void RewardsDOMHandler::OnGetAutoContributeProperties(
@@ -1675,6 +1677,8 @@ void RewardsDOMHandler::OnGetExternalWallet(
     data.SetKey("wallet", std::move(wallet_dict));
     CallJavascriptFunction("brave_rewards.externalWallet", data);
   }
+
+  rewards_service_->ContributeUnverifiedPublishers();
 }
 
 void RewardsDOMHandler::OnProcessRewardsPageUrl(

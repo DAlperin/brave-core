@@ -141,6 +141,8 @@ class RewardsService : public KeyedService {
 
   virtual bool IsInitialized() = 0;
 
+  virtual void ContributeUnverifiedPublishers() = 0;
+
   virtual void CreateWallet(CreateWalletCallback callback) = 0;
   virtual void GetRewardsParameters(GetRewardsParametersCallback callback) = 0;
   virtual void GetActivityInfoList(const uint32_t start,

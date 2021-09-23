@@ -99,6 +99,8 @@ interface BatLedger {
   RefreshPublisher(string publisher_key) => (ledger.mojom.PublisherStatus status);
 
   StartMonthlyContribution();
+  
+  ContributeUnverifiedPublishers();
 
   SaveMediaInfo(string type, map<string, string> args) =>
     (ledger.mojom.Result result, ledger.mojom.PublisherInfo? publisher_info);

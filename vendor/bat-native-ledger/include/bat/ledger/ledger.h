@@ -272,6 +272,8 @@ class LEDGER_EXPORT Ledger {
 
   virtual void StartMonthlyContribution() = 0;
 
+  virtual void ContributeUnverifiedPublishers() = 0;
+
   virtual void SaveMediaInfo(
       const std::string& type,
       const base::flat_map<std::string, std::string>& data,

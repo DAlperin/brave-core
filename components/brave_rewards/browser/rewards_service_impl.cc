@@ -2553,6 +2553,14 @@ void RewardsServiceImpl::StartMonthlyContributionForTest() {
   bat_ledger_->StartMonthlyContribution();
 }
 
+void RewardsServiceImpl::ContributeUnverifiedPublishers() {
+  if (!Connected()) {
+    return;
+  }
+
+  bat_ledger_->ContributeUnverifiedPublishers();
+}
+
 void RewardsServiceImpl::CheckInsufficientFundsForTesting() {
   MaybeShowNotificationAddFunds();
 }
