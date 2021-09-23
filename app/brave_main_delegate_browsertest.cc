@@ -95,7 +95,6 @@ IN_PROC_BROWSER_TEST_F(BraveMainDelegateBrowserTest, DisabledFeatures) {
 #if !defined(OS_ANDROID)
     &features::kSettingsLandingPageRedesign,
 #endif
-    &features::kSignedExchangePrefetchCacheForNavigations,
     &features::kSignedExchangeSubresourcePrefetch,
     &features::kSubresourceWebBundles,
     &features::kWebOTP,
