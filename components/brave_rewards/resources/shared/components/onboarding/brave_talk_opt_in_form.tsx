@@ -22,6 +22,33 @@ interface Props {
   onTakeTour: () => void
 }
 
+type TosProps = {
+  text: string
+}
+
+function TermsOfService (props: TosProps) {
+  return (
+    <style.terms>
+      {
+        formatMessage(props.text, {
+          tags: {
+            $1: (content) => (
+              <NewTabLink key='terms' href={termsOfServiceURL}>
+                {content}
+              </NewTabLink>
+            ),
+            $3: (content) => (
+              <NewTabLink key='privacy' href={privacyPolicyURL}>
+                {content}
+              </NewTabLink>
+            )
+          }
+        })
+      }
+    </style.terms>
+  )
+}
+
 export function BraveTalkOptInForm (props: Props) {
   const { getString } = React.useContext(LocaleContext)
   const [showStartFreeCall, setShowStartFreeCall] = React.useState(false)
@@ -73,6 +100,7 @@ export function BraveTalkOptInForm (props: Props) {
             {getString('braveTalkTurnOnPrivateAds')}
           </MainButton>
         </style.enable>
+        <TermsOfService text={getString('braveTalkOptInAdsTerms')}/>
       </style.root>
     )
   }
@@ -91,24 +119,7 @@ export function BraveTalkOptInForm (props: Props) {
           {getString('braveTalkTurnOnRewards')}
         </MainButton>
       </style.enable>
-      <style.terms>
-        {
-          formatMessage(getString('braveTalkOptInTerms'), {
-            tags: {
-              $1: (content) => (
-                <NewTabLink key='terms' href={termsOfServiceURL}>
-                  {content}
-                </NewTabLink>
-              ),
-              $3: (content) => (
-                <NewTabLink key='privacy' href={privacyPolicyURL}>
-                  {content}
-                </NewTabLink>
-              )
-            }
-          })
-        }
-      </style.terms>
+      <TermsOfService text={getString('braveTalkOptInRewardsTerms')}/>
     </style.root>
   )
 }

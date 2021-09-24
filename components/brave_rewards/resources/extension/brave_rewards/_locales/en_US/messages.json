@@ -577,7 +577,7 @@
     "message": "Turn on Rewards",
     "description": ""
   },
-  "braveTalkOptInTerms": {
+  "braveTalkOptInRewardsTerms": {
     "message": "By clicking, you agree to the $tos_link_begin$Terms of Service$tos_link_end$ and $pp_link_begin$Privacy Policy$pp_link_end$. Disable any time in Settings.",
     "description": "",
     "placeholders": {
@@ -606,6 +606,24 @@
   "braveTalkTurnOnPrivateAds": {
     "message": "Turn on Brave Private Ads",
     "description": ""
+  },
+  "braveTalkOptInAdsTerms": {
+    "message": "By turning on Ads, you agree to the $tos_link_begin$Terms of Service$tos_link_end$ and $pp_link_begin$Privacy Policy$pp_link_end$.",
+    "description": "",
+    "placeholders": {
+      "tos_link_begin": {
+        "content": "$1"
+      },
+      "tos_link_end": {
+        "content": "$2"
+      },
+      "pp_link_begin": {
+        "content": "$3"
+      },
+      "pp_link_end": {
+        "content": "$4"
+      }
+    }
   },
   "braveTalkCanStartFreeCall": {
     "message": "You can now start a free call",
