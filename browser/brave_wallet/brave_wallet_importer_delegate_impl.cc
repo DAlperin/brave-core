@@ -37,6 +37,7 @@ using extensions::ExtensionRegistry;
 using extensions::IsOnBackendSequence;
 using extensions::StorageFrontend;
 using extensions::mojom::ManifestLocation;
+using value_store::ValueStore;
 
 namespace brave_wallet {
 
