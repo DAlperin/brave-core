@@ -10,8 +10,10 @@
 
 namespace version_info {
 
-std::string GetProductNameAndVersionForUserAgent() {
-  return std::string("Chrome/") + BRAVE_CHROMIUM_VERSION;
+const std::string& GetProductNameAndVersionForUserAgent() {
+  static const base::NoDestructor<std::string> product_and_version(
+      "Chrome/" + std::string(BRAVE_CHROMIUM_VERSION));
+  return *product_and_version;
 }
 
 // We use |nightly| instead of |canary|.
