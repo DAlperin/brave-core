@@ -5,7 +5,10 @@
 
 #include "brave/components/brave_vpn/brave_vpn_os_connection_api_win.h"
 
+// clang-format off
+#include <windows.h>
 #include <ras.h>
+// clang-format on
 
 #include "base/logging.h"
 #include "base/notreached.h"

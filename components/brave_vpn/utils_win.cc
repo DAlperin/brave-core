@@ -5,9 +5,12 @@
 
 #include "brave/components/brave_vpn/utils_win.h"
 
+// clang-format off
+#include <windows.h>
 #include <ras.h>
 #include <raserror.h>
 #include <stdio.h>
+// clang-format on
 
 #include "base/logging.h"
 #include "base/strings/stringprintf.h"
