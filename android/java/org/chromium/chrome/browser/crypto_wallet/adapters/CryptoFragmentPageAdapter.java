@@ -34,7 +34,7 @@ public class CryptoFragmentPageAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        if (position == 2) {
+        if (position == 1) {
             return AccountsFragment.newInstance();
         } else {
             return PortfolioFragment.newInstance();
