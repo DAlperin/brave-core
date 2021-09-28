@@ -10,6 +10,7 @@
 #include "base/base64.h"
 #include "base/bind_post_task.h"
 #include "base/json/json_reader.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/threading/sequenced_task_runner_handle.h"
 #include "brave/browser/brave_wallet/keyring_controller_factory.h"
 #include "brave/browser/ethereum_remote_client/buildflags/buildflags.h"
@@ -25,6 +26,8 @@
 #include "extensions/browser/value_store/value_store.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/mojom/manifest.mojom.h"
+#include "third_party/boringssl/src/include/openssl/digest.h"
+#include "third_party/boringssl/src/include/openssl/hkdf.h"
 
 #if BUILDFLAG(ETHEREUM_REMOTE_CLIENT_ENABLED)
 #include "brave/browser/ethereum_remote_client/ethereum_remote_client_constants.h"
@@ -206,14 +209,53 @@ void BraveWalletImporterDelegateImpl::OnGetLocalStorage(
     return;
   }
 
+  std::string legacy_crypto_wallets_password;
   const base::Value* argon_params_value =
       dict->FindPath("data.KeyringController.argonParams");
-  // TODO(darkdh): Introduce argon2 deps so we can decrypt 24 words of legacy
-  // encrypted mnemonic
   if (argon_params_value) {
-    VLOG(1) << "legacy brave Crypto Wallets is not supported";
-    std::move(callback).Run(false);
-    return;
+    auto hash_len = argon_params_value->FindIntKey("hashLen");
+    auto mem = argon_params_value->FindIntKey("mem");
+    auto time = argon_params_value->FindIntKey("time");
+    auto type = argon_params_value->FindIntKey("type");
+    if (!hash_len || !mem || !time) {
+      VLOG(0) << "missing hashLen, mem, time or type in argonParams";
+      std::move(callback).Run(false);
+      return;
+    }
+    const std::string* salt_str =
+        dict->FindStringPath("data.KeyringController.salt");
+    if (!salt_str) {
+      VLOG(0) << "missing data.KeyringController.salt";
+      std::move(callback).Run(false);
+      return;
+    }
+
+    if (type != 2) {
+      VLOG(0) << "Type should be Argon2_id";
+      std::move(callback).Run(false);
+      return;
+    }
+
+    std::vector<uint8_t> master_key(*hash_len);
+    if (argon2id_hash_raw(*time, *mem, 1, password.c_str(), password.size(),
+                          salt_str->data(), salt_str->size(), master_key.data(),
+                          *hash_len) != ARGON2_OK) {
+      VLOG(1) << "argon2id_hash_raw failed";
+      std::move(callback).Run(false);
+      return;
+    }
+    const std::string info = "metamask-encryptor";
+    const std::vector<uint8_t> zero_salt(64, 0);
+    std::vector<uint8_t> sub_key(*hash_len);
+    if (!HKDF(sub_key.data(), sub_key.size(), EVP_sha512(), master_key.data(),
+              master_key.size(), zero_salt.data(), zero_salt.size(),
+              (uint8_t*)info.data(), info.size())) {
+      VLOG(1) << "HKDF failed";
+      std::move(callback).Run(false);
+      return;
+    }
+    legacy_crypto_wallets_password =
+        base::UTF16ToUTF8(std::u16string(sub_key.begin(), sub_key.end()));
   }
 
   const std::string* vault_str =
@@ -257,15 +299,18 @@ void BraveWalletImporterDelegateImpl::OnGetLocalStorage(
     return;
   }
 
+  const std::string password_to_use = legacy_crypto_wallets_password.empty()
+                                          ? password
+                                          : legacy_crypto_wallets_password;
   std::unique_ptr<PasswordEncryptor> encryptor =
       PasswordEncryptor::DeriveKeyFromPasswordUsingPbkdf2(
-          password, ToSpan(salt_decoded), 10000, 256);
+          password_to_use, ToSpan(salt_decoded), 10000, 256);
   DCHECK(encryptor);
 
   std::vector<uint8_t> decrypted_keyrings;
   if (!encryptor->DecryptForImporter(ToSpan(data_decoded), ToSpan(iv_decoded),
                                      &decrypted_keyrings)) {
-    VLOG(1) << "Importer decryption failed";
+    VLOG(0) << "Importer decryption failed";
     std::move(callback).Run(false);
     return;
   }
@@ -278,6 +323,9 @@ void BraveWalletImporterDelegateImpl::OnGetLocalStorage(
     std::move(callback).Run(false);
     return;
   }
+  LOG(ERROR) << decrypted_keyrings_str;
+  std::move(callback).Run(false);
+  return;
 
   const std::string* mnemonic = nullptr;
   for (const auto& keyring : keyrings->GetList()) {
@@ -313,20 +361,9 @@ void BraveWalletImporterDelegateImpl::OnGetLocalStorage(
           std::move(callback)));
 }
 
-bool BraveWalletImporterDelegateImpl::IsLegacyCryptoWallets() const {
-  EthereumRemoteClientService* service =
-      EthereumRemoteClientServiceFactory::GetInstance()->GetForContext(
-          context_);
-  DCHECK(service);
-  return service->IsLegacyCryptoWalletsSetup();
-}
-
 bool BraveWalletImporterDelegateImpl::IsCryptoWalletsInstalledInternal() const {
   if (!extensions::ExtensionPrefs::Get(context_)->HasPrefForExtension(
           ethereum_remote_client_extension_id))
-    return false;
-  // TODO(darkdh): block legacy wallet until we support decrypting its mnemonic
-  if (IsLegacyCryptoWallets())
     return false;
   return true;
 }
