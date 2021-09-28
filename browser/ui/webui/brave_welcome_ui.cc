@@ -106,7 +106,7 @@ void WelcomeDOMHandler::HandleRecordP3A(base::Value::ConstListView args) {
     return;
   screen_number_ = args[0].GetInt();
   finished_ = args[1].GetBool();
-  skipped_ = args[1].GetBool();
+  skipped_ = args[2].GetBool();
 
   if (screen_number_) {
     // It is 1-based on JS side, we want 0-based.
