@@ -1,6 +1,8 @@
-#!/usr/bin/env python
-
-from __future__ import print_function
+#!/usr/bin/env python3
+# Copyright (c) 2021 The Brave Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import atexit
 import contextlib
@@ -20,9 +22,8 @@ except ImportError:
 import os
 import zipfile
 
-from .config import is_verbose_mode, PLATFORM
+from .config import is_verbose_mode
 from .env_util import get_vs_env
-from .helpers import release_channel
 
 BOTO_DIR = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'vendor',
                                         'boto'))
@@ -82,6 +83,7 @@ def download(text, url, path):
     safe_mkdir(os.path.dirname(path))
     with open(path, 'wb') as local_file:
         if hasattr(ssl, '_create_unverified_context'):
+            # pylint: disable=protected-access
             ssl._create_default_https_context = ssl._create_unverified_context
 
         web_file = urlopen(url)
@@ -101,12 +103,11 @@ def download(text, url, path):
 
             if not ci:
                 percent = downloaded_size * 100. / file_size
-                status = "\r%s    %10d    [%3.1f%%]" % (
-                    text, downloaded_size, percent)
+                status = f"\r{text}    {downloaded_size:10}    [{percent:3.1f}%]"
                 print(status)
 
         if ci:
-            print("%s done." % (text))
+            print(f"{text} done.")
         else:
             print()
     return path
@@ -132,15 +133,14 @@ def make_zip(zip_file_path, files, dirs):
         files += dirs
         execute(['zip', '-r', '-y', zip_file_path] + files)
     else:
-        zip_file = zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED,
-                                   allowZip64=True)
-        for filename in files:
-            zip_file.write(filename, filename)
-        for dirname in dirs:
-            for root, _, filenames in os.walk(dirname):
-                for f in filenames:
-                    zip_file.write(os.path.join(root, f))
-        zip_file.close()
+        with zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED,
+                             allowZip64=True) as zip_file:
+            for filename in files:
+                zip_file.write(filename, filename)
+            for dirname in dirs:
+                for root, _, filenames in os.walk(dirname):
+                    for f in filenames:
+                        zip_file.write(os.path.join(root, f))
 
 
 def rm_rf(path):
@@ -166,10 +166,11 @@ def safe_mkdir(path):
             raise
 
 
-def execute(argv, env=os.environ):
+def execute(argv, env=os.environ): # pylint: disable=dangerous-default-value
     if is_verbose_mode():
         print(' '.join(argv))
     try:
+        # pylint: disable=consider-using-with
         process = subprocess.Popen(
           argv, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
           universal_newlines=True)
@@ -181,7 +182,7 @@ def execute(argv, env=os.environ):
             # Most useful erroroutput from typescript / webpack is in stdout
             # and not stderr.
             print(stdout)
-            raise RuntimeError('Command \'%s\' failed' % (' '.join(argv)), stderr)
+            raise RuntimeError(f'Command \'{" ".join(argv)}\' failed', stderr)
         return stdout
     except subprocess.CalledProcessError as e:
         print('Error in subprocess:')
@@ -190,7 +191,7 @@ def execute(argv, env=os.environ):
         raise e
 
 
-def execute_stdout(argv, env=os.environ):
+def execute_stdout(argv, env=os.environ): # pylint: disable=dangerous-default-value
     if is_verbose_mode():
         print(' '.join(argv))
         try:
