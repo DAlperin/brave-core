@@ -5,25 +5,25 @@
 import * as React from 'react'
 
 import { LocaleContext } from '../../shared/lib/locale_context'
-import { HostContext, useHostListener } from '../lib/host_context'
-import { Host } from '../lib/interfaces'
+import { ClientContext, useClientListener } from '../lib/client_context'
+import { Client } from '../lib/interfaces'
 import { WithThemeVariables } from '../../shared/components/with_theme_variables'
 import { BraveTalkOptInForm } from '../../shared/components/onboarding/brave_talk_opt_in_form'
 
 interface Props {
-  host: Host
+  client: Client
 }
 
 export function App (props: Props) {
-  const { host } = props
+  const { client } = props
 
-  const [loading, setLoading] = React.useState(host.state.loading)
-  const [rewardsEnabled, setRewardsEnabled] =
-    React.useState(host.state.rewardsEnabled)
+  const [loading, setLoading] = React.useState(client.state.loading)
+  const [showRewardsOnboarding, setShowRewardsOnboarding] =
+    React.useState(client.state.showRewardsOnboarding)
 
-  useHostListener(props.host, (state) => {
+  useClientListener(props.client, (state) => {
     setLoading(state.loading)
-    setRewardsEnabled(state.rewardsEnabled)
+    setShowRewardsOnboarding(state.showRewardsOnboarding)
   })
 
   if (loading) {
@@ -31,16 +31,16 @@ export function App (props: Props) {
   }
 
   return (
-    <HostContext.Provider value={props.host}>
-      <LocaleContext.Provider value={props.host}>
+    <ClientContext.Provider value={props.client}>
+      <LocaleContext.Provider value={props.client}>
         <WithThemeVariables>
           <BraveTalkOptInForm
-            rewardsEnabled={rewardsEnabled}
-            onEnable={host.enableRewards}
-            onTakeTour={host.openRewardsTour}
+            showRewardsOnboarding={showRewardsOnboarding}
+            onEnable={client.enableAds}
+            onTakeTour={client.openRewardsTour}
           />
         </WithThemeVariables>
       </LocaleContext.Provider>
-    </HostContext.Provider>
+    </ClientContext.Provider>
   )
 }

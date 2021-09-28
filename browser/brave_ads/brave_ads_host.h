@@ -7,18 +7,14 @@
 #define BRAVE_BROWSER_BRAVE_ADS_BRAVE_ADS_HOST_H_
 
 #include <string>
+#include <vector>
 
 #include "base/scoped_observation.h"
 #include "brave/components/brave_ads/common/brave_ads_host.mojom.h"
 #include "brave/components/brave_rewards/browser/rewards_service.h"
 #include "brave/components/brave_rewards/browser/rewards_service_observer.h"
 
-class Browser;
 class Profile;
-
-namespace content {
-class WebContents;
-}
 
 namespace brave_ads {
 
@@ -27,7 +23,7 @@ namespace brave_ads {
 class BraveAdsHost : public brave_ads::mojom::BraveAdsHost,
                      public brave_rewards::RewardsServiceObserver {
  public:
-  explicit BraveAdsHost(content::WebContents* web_contents);
+  explicit BraveAdsHost(Profile* profile);
   BraveAdsHost(const BraveAdsHost&) = delete;
   BraveAdsHost& operator=(const BraveAdsHost&) = delete;
   ~BraveAdsHost() override;
@@ -41,11 +37,11 @@ class BraveAdsHost : public brave_ads::mojom::BraveAdsHost,
                     bool ads_enabled) override;
 
  private:
-  bool ShowRewardsPopup(Browser* browser, Profile* profile);
-  void RunCallbackAndReset(bool result);
+  bool ShowRewardsPopup();
+  void RunCallbacksAndReset(bool result);
 
-  content::WebContents* web_contents_;
-  RequestAdsEnabledCallback callback_;
+  Profile* profile_;
+  std::vector<RequestAdsEnabledCallback> callbacks_;
   base::ScopedObservation<brave_rewards::RewardsService,
                           brave_rewards::RewardsServiceObserver>
       rewards_service_observation_{this};

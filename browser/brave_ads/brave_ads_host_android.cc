@@ -10,24 +10,18 @@
 #include "brave/browser/brave_ads/ads_service_factory.h"
 #include "brave/components/brave_ads/browser/ads_service.h"
 #include "chrome/browser/profiles/profile.h"
-#include "content/public/browser/web_contents.h"
 
 namespace brave_ads {
 
-BraveAdsHostAndroid::BraveAdsHostAndroid(content::WebContents* web_contents)
-    : web_contents_(web_contents) {
-  DCHECK(web_contents_);
+BraveAdsHostAndroid::BraveAdsHostAndroid(Profile* profile) : profile_(profile) {
+  DCHECK(profile_);
 }
 
 BraveAdsHostAndroid::~BraveAdsHostAndroid() = default;
 
 void BraveAdsHostAndroid::RequestAdsEnabled(
     RequestAdsEnabledCallback callback) {
-  Profile* profile =
-      Profile::FromBrowserContext(web_contents_->GetBrowserContext());
-  DCHECK(profile);
-
-  const AdsService* ads_service = AdsServiceFactory::GetForProfile(profile);
+  const AdsService* ads_service = AdsServiceFactory::GetForProfile(profile_);
   if (!ads_service) {
     std::move(callback).Run(false);
     return;

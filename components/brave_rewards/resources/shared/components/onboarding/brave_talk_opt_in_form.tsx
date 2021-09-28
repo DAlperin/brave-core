@@ -17,7 +17,7 @@ const termsOfServiceURL = 'https://basicattentiontoken.org/user-terms-of-service
 const privacyPolicyURL = 'https://brave.com/privacy/#rewards'
 
 interface Props {
-  rewardsEnabled: boolean
+  showRewardsOnboarding: boolean
   onEnable: () => void
   onTakeTour: () => void
 }
@@ -53,7 +53,7 @@ export function BraveTalkOptInForm (props: Props) {
   const { getString } = React.useContext(LocaleContext)
   const [showStartFreeCall, setShowStartFreeCall] = React.useState(false)
 
-  const onRewardsTurnedOn = () => {
+  const onEnableButtonClicked = () => {
     props.onEnable()
     setShowStartFreeCall(true)
   }
@@ -85,22 +85,22 @@ export function BraveTalkOptInForm (props: Props) {
     )
   }
 
-  if (props.rewardsEnabled) {
+  if (props.showRewardsOnboarding) {
     return (
       <style.root>
         <CashbackIcon />
         <style.header>
-          {getString('braveTalkTurnOnPrivateAdsToStartCall')}
+          {getString('braveTalkTurnOnRewardsToStartCall')}
         </style.header>
         <style.text>
-          {getString('braveTalkPrivateAdsDescription')}
+          {getString('braveTalkBraveRewardsDescription')}
         </style.text>
         <style.enable>
-          <MainButton onClick={onRewardsTurnedOn}>
-            {getString('braveTalkTurnOnPrivateAds')}
+          <MainButton onClick={onEnableButtonClicked}>
+            {getString('braveTalkTurnOnRewards')}
           </MainButton>
         </style.enable>
-        <TermsOfService text={getString('braveTalkOptInAdsTerms')}/>
+        <TermsOfService text={getString('braveTalkOptInRewardsTerms')}/>
       </style.root>
     )
   }
@@ -109,17 +109,17 @@ export function BraveTalkOptInForm (props: Props) {
     <style.root>
       <CashbackIcon />
       <style.header>
-        {getString('braveTalkTurnOnRewardsToStartCall')}
+        {getString('braveTalkTurnOnPrivateAdsToStartCall')}
       </style.header>
       <style.text>
-        {getString('braveTalkBraveRewardsDescription')}
+        {getString('braveTalkPrivateAdsDescription')}
       </style.text>
       <style.enable>
-        <MainButton onClick={onRewardsTurnedOn}>
-          {getString('braveTalkTurnOnRewards')}
+        <MainButton onClick={onEnableButtonClicked}>
+          {getString('braveTalkTurnOnPrivateAds')}
         </MainButton>
       </style.enable>
-      <TermsOfService text={getString('braveTalkOptInRewardsTerms')}/>
+      <TermsOfService text={getString('braveTalkOptInAdsTerms')}/>
     </style.root>
   )
 }

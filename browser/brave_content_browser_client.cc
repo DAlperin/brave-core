@@ -15,7 +15,6 @@
 #include "base/rand_util.h"
 #include "base/system/sys_info.h"
 #include "base/task/post_task.h"
-#include "brave/browser/brave_ads/brave_ads_host_private.h"
 #include "brave/browser/brave_browser_main_extra_parts.h"
 #include "brave/browser/brave_browser_process.h"
 #include "brave/browser/brave_shields/brave_shields_web_contents_observer.h"
@@ -177,11 +176,14 @@ using extensions::ChromeContentBrowserClientExtensionsPart;
 #endif
 
 #if !defined(OS_ANDROID)
-#include "brave/browser/brave_ads/brave_ads_host.h"
 #include "brave/browser/new_tab/new_tab_shows_navigation_throttle.h"
-#else
+#endif
+
+#if defined(OS_ANDROID)
 #include "brave/browser/brave_ads/brave_ads_host_android.h"
-#endif  // !defined(OS_ANDROID)
+#elif BUILDFLAG(ENABLE_EXTENSIONS)
+#include "brave/browser/brave_ads/brave_ads_host.h"
+#endif  // defined(OS_ANDROID)
 
 namespace {
 
@@ -221,26 +223,19 @@ void BindCosmeticFiltersResources(
 void BindBraveAdsHost(
     content::RenderFrameHost* const frame_host,
     mojo::PendingReceiver<brave_ads::mojom::BraveAdsHost> receiver) {
+#if defined(OS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)
   auto* context = frame_host->GetBrowserContext();
   auto* profile = Profile::FromBrowserContext(context);
 
-  if (brave::IsRegularProfile(profile)) {
-    content::WebContents* web_contents =
-        content::WebContents::FromRenderFrameHost(frame_host);
-    mojo::MakeSelfOwnedReceiver(
-#if !defined(OS_ANDROID)
-        std::make_unique<brave_ads::BraveAdsHost>(
-#else
-        std::make_unique<brave_ads::BraveAdsHostAndroid>(
-#endif  // !defined(OS_ANDROID)
-            web_contents),
-        std::move(receiver));
-  } else {
-    // Dummy API which always returns false for private contexts.
-    mojo::MakeSelfOwnedReceiver(
-        std::make_unique<brave_ads::BraveAdsHostPrivate>(),
-        std::move(receiver));
-  }
+  mojo::MakeSelfOwnedReceiver(
+#if defined(OS_ANDROID)
+      std::make_unique<brave_ads::BraveAdsHostAndroid>(
+#elif BUILDFLAG(ENABLE_EXTENSIONS)
+      std::make_unique<brave_ads::BraveAdsHost>(
+#endif  // defined(OS_ANDROID)
+          profile),
+      std::move(receiver));
+#endif  // defined(OS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)
 }
 
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)

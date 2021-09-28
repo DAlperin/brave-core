@@ -68,10 +68,16 @@ chrome.runtime.onConnect.addListener(function (port) {
   if (port.name === 'request-enable-rewards-panel') {
     let adsEnabled = false
     port.onMessage.addListener(function () {
-      adsEnabled = true
+      // Ignore any calls made after the first one
+      if (!adsEnabled) {
+        adsEnabled = true
+        chrome.braveRewards.requestAdsEnabledPopupClosed(true)
+      }
     })
     port.onDisconnect.addListener(function () {
-      chrome.braveRewards.requestAdsEnabledPopupClosed(adsEnabled)
+      if (!adsEnabled) {
+        chrome.braveRewards.requestAdsEnabledPopupClosed(false)
+      }
     })
   }
 })

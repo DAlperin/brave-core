@@ -10,11 +10,11 @@ import '../../../../../ui/webui/resources/fonts/muli.css'
 import '../../../../../ui/webui/resources/fonts/poppins.css'
 
 import { App } from '../../request_ads_enabled/components/app'
-import { createHost } from '../../request_ads_enabled/lib/host'
+import { createClient } from '../../request_ads_enabled/lib/client'
 
 function onReady () {
   ReactDOM.render(
-    <App host={createHost()} />,
+    <App client={createClient()} />,
     document.getElementById('ads_enable_root'))
 }
 

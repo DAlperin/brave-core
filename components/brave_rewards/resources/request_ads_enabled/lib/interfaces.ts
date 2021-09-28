@@ -2,17 +2,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-export interface HostState {
+export interface ClientState {
   loading: boolean
-  rewardsEnabled: boolean
+  showRewardsOnboarding: boolean
 }
 
-export type HostListener = (state: HostState) => void
+export type ClientListener = (state: ClientState) => void
 
-export interface Host {
-  state: HostState
-  addListener: (callback: HostListener) => (() => void)
+export interface Client {
+  state: ClientState
+  addListener: (callback: ClientListener) => (() => void)
   getString: (key: string) => string
   openRewardsTour: () => void
-  enableRewards: () => void
+  enableAds: () => void
 }

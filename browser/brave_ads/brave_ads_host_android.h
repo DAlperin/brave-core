@@ -8,9 +8,7 @@
 
 #include "brave/components/brave_ads/common/brave_ads_host.mojom.h"
 
-namespace content {
-class WebContents;
-}
+class Profile;
 
 namespace brave_ads {
 
@@ -18,7 +16,7 @@ namespace brave_ads {
 // platform. The js api asks the user for permission to enable ads.
 class BraveAdsHostAndroid : public brave_ads::mojom::BraveAdsHost {
  public:
-  explicit BraveAdsHostAndroid(content::WebContents* web_contents);
+  explicit BraveAdsHostAndroid(Profile* profile);
   BraveAdsHostAndroid(const BraveAdsHostAndroid&) = delete;
   BraveAdsHostAndroid& operator=(const BraveAdsHostAndroid&) = delete;
   ~BraveAdsHostAndroid() override;
@@ -27,7 +25,7 @@ class BraveAdsHostAndroid : public brave_ads::mojom::BraveAdsHost {
   void RequestAdsEnabled(RequestAdsEnabledCallback callback) override;
 
  private:
-  content::WebContents* web_contents_;
+  Profile* profile_;
 };
 
 }  // namespace brave_ads
