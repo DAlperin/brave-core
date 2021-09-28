@@ -15,6 +15,8 @@
 #include "sql/statement.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+// npm run test -- brave_unit_tests --filter=LedgerDatabaseMigrationTest.*
+
 namespace ledger {
 
 class LedgerDatabaseMigrationTest : public testing::Test {
@@ -753,6 +755,12 @@ TEST_F(LedgerDatabaseMigrationTest, Migration_32_BitflyerRegion) {
   client_.SetOptionForTesting(option::kIsBitflyerRegion, base::Value(true));
   InitializeLedger();
   EXPECT_EQ(CountTableRows("balance_report_info"), 0);
+}
+
+TEST_F(LedgerDatabaseMigrationTest, Migration_33) {
+  InitializeDatabaseAtVersion(32);
+  InitializeLedger();
+  EXPECT_FALSE(GetDB()->DoesColumnExist("pending_contribution", "processor"));
 }
 
 }  // namespace ledger
