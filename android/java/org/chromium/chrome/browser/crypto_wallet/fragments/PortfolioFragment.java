@@ -114,7 +114,8 @@ public class PortfolioFragment
         mBalance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UpdatePortfolio();
+                //UpdatePortfolio();
+                UpdatePortfolioERC20();
             }
         });
 
@@ -132,7 +133,7 @@ public class PortfolioFragment
         if (ethJsonRpcController != null) {
             ethJsonRpcController.getChainId(chain_id -> {
                 mSpinner.setSelection(getIndexOf(mSpinner, chain_id));
-                UpdatePortfolio();
+                //UpdatePortfolio();
             });
         }
     }
@@ -160,7 +161,7 @@ public class PortfolioFragment
         EthJsonRpcController ethJsonRpcController = getEthJsonRpcController();
         if (ethJsonRpcController != null) {
             ethJsonRpcController.setNetwork(Utils.getNetworkConst(getActivity(), item));
-            UpdatePortfolio();
+            //UpdatePortfolio();
         }
     }
 
@@ -305,4 +306,112 @@ public class PortfolioFragment
                     }
                 });
     }
+
+
+    private void UpdatePortfolioERC20() {
+        Log.e(TAG, "UpdatePortfolioERC20() 000");
+        /*
+        ercTokenRegistry.getAllTokens(tokens -> { setUpAssetsList(view, tokens); });
+        updateBuySendAsset(String asset, ErcToken ercToken)
+        mCurrentErcToken = ercToken;
+
+                address : all from
+                mKeyringController.getDefaultKeyringInfo
+                for (AccountInfo info : keyring.accountInfos) {
+                  address_es = info.address;
+                }
+
+                if (mCurrentErcToken == null || mCurrentErcToken.contractAddress.isEmpty()) {
+                    mEthJsonRpcController.getBalance(address, (success, balance) -> {
+                        if (!success) {
+                            return;
+                        }
+                        populateBalance(balance);
+                    });
+                } else {
+                    mEthJsonRpcController.getErc20TokenBalance(
+                            mCurrentErcToken.contractAddress, address, (success, balance) -> {
+                                if (!success) {
+                                    return;
+                                }
+                                populateBalance(balance);
+                            });
+                }
+        */
+        ;
+        KeyringController keyringController = getKeyringController();
+        assert keyringController != null : "keyringController should not be null";
+        ErcTokenRegistry ercTokenRegistry = getErcTokenRegistry();
+        assert ercTokenRegistry != null : "ercTokenRegistry should not be null";
+        EthJsonRpcController rpcController = getEthJsonRpcController();
+        assert rpcController != null : "rpcController is null";
+
+
+        keyringController.getDefaultKeyringInfo(keyringInfo -> {
+            Log.e(TAG, "getDefaultKeyringInfo cb ========================");
+            Log.e(TAG, "getDefaultKeyringInfo cb 000 keyring.accountInfos.length=" + keyringInfo.accountInfos.length);
+            for (AccountInfo info : keyringInfo.accountInfos) {
+                Log.e(TAG, "info.address=" + info.address);
+            }
+            Log.e(TAG, "getDefaultKeyringInfo cb ========================");
+
+            ercTokenRegistry.getAllTokens(tokens -> {
+                Log.e(TAG, "getAllTokens cb ========================");
+                Log.e(TAG, "getAllTokens cb 000 tokens.length=" + tokens.length);
+                for (ErcToken token : tokens) {
+                    if (token == null) { Log.e(TAG, "getAllTokens cb 002 token is null"); }
+                    Log.e(TAG, "getAllTokens cb 002 token.contractAddress="+token.contractAddress);
+                    Log.e(TAG, "getAllTokens cb 002 token.name           ="+token.name);
+                    Log.e(TAG, "getAllTokens cb 002 token.logo           ="+token.logo);
+                    Log.e(TAG, "getAllTokens cb 002 token.isErc20        ="+token.isErc20);
+                    Log.e(TAG, "getAllTokens cb 002 token.isErc721       ="+token.isErc721);
+                    Log.e(TAG, "getAllTokens cb 002 token.symbol         ="+token.symbol);
+                    Log.e(TAG, "getAllTokens cb 002 token.decimals       ="+token.decimals);
+                    Log.e(TAG, "getAllTokens cb 002 token.visible        ="+token.visible);
+                    Log.e(TAG, "getAllTokens cb --------------");
+                }
+                Log.e(TAG, "getAllTokens cb ========================");
+
+
+                Log.e(TAG, "Iterating all again ========================");
+                for (AccountInfo info : keyringInfo.accountInfos) {
+                    //Log.e(TAG, "info.address=" + info.address);
+                    String address = info.address;
+
+                    for (ErcToken token : tokens) {
+                        if (token.contractAddress.isEmpty()) {
+                            rpcController.getBalance(address, (success, balance) -> {
+                                Log.e(TAG, "getBalance cb address="+address);
+                                Log.e(TAG, "getBalance cb success="+success);
+                                Log.e(TAG, "getBalance cb balance="+balance);
+                                // if (!success) {
+                                //     return;
+                                // }
+                                // populateBalance(balance);
+                            });
+
+                        } else {
+                          rpcController.getErc20TokenBalance(
+                                  token.contractAddress, address, (success, balance) -> {
+                                      Log.e(TAG, "getErc20TokenBalance cb address="+address);
+                                      Log.e(TAG, "getErc20TokenBalance cb success="+success);
+                                      Log.e(TAG, "getErc20TokenBalance cb balance="+balance);
+                                      // if (!success) {
+                                      //     return;
+                                      // }
+                                      //populateBalance(balance);
+                                  });
+
+                        }
+                    }
+                }
+
+            });  // ercTokenRegistry.getAllTokens
+
+
+        }); // keyringController.getDefaultKeyringInfo
+
+
+
+    }  // UpdatePortfolioERC20()
 }
