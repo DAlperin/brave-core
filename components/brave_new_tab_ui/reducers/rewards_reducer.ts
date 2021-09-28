@@ -74,7 +74,8 @@ const rewardsReducer: Reducer<NewTab.State | undefined> = (state: NewTab.State, 
         const updatedPromotions = state.rewardsState.promotions
         updatedPromotions.push({
           promotionId: promotion.promotionId,
-          type: promotion.type
+          type: promotion.type,
+          amount: promotion.amount
         })
 
         state.rewardsState.promotions = updatedPromotions

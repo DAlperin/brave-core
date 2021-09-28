@@ -7,11 +7,9 @@ import * as React from 'react'
 import { LocaleContext, formatMessage } from '../lib/locale_context'
 
 import { NewTabLink } from './new_tab_link'
+import * as urls from '../lib/rewards_urls'
 
 import * as style from './terms_of_service.style'
-
-const termsOfServiceURL = 'https://basicattentiontoken.org/user-terms-of-service'
-const privacyPolicyURL = 'https://brave.com/privacy/#rewards'
 
 export function TermsOfService () {
   const { getString } = React.useContext(LocaleContext)
@@ -21,12 +19,12 @@ export function TermsOfService () {
         formatMessage(getString('onboardingTerms'), {
           tags: {
             $1: (content) => (
-              <NewTabLink key='terms' href={termsOfServiceURL}>
+              <NewTabLink key='terms' href={urls.termsOfServiceURL}>
                 {content}
               </NewTabLink>
             ),
             $3: (content) => (
-              <NewTabLink key='privacy' href={privacyPolicyURL}>
+              <NewTabLink key='privacy' href={urls.privacyPolicyURL}>
                 {content}
               </NewTabLink>
             )

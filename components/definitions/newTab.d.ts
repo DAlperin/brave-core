@@ -246,6 +246,7 @@ declare namespace NewTab {
   export interface Promotion {
     type: PromotionTypes
     promotionId: string
+    amount: number
   }
 
   export interface RewardsBalance {
