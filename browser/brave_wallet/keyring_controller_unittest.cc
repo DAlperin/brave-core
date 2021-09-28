@@ -1593,4 +1593,100 @@ TEST_F(KeyringControllerUnitTest, NotifyUserInteraction) {
   ASSERT_TRUE(controller.IsLocked());
 }
 
+TEST_F(KeyringControllerUnitTest, SetSelectedAccount) {
+  KeyringController controller(GetPrefs());
+  controller.CreateWallet("brave", base::DoNothing::Once<const std::string&>());
+  base::RunLoop().RunUntilIdle();
+  std::string first_account = controller.default_keyring_->GetAddress(0);
+  controller.AddAccountForDefaultKeyring("Who does number 2 work for");
+  std::string second_account = controller.default_keyring_->GetAddress(1);
+
+  // This does not depend on being locked
+  controller.Lock();
+  EXPECT_TRUE(controller.IsLocked());
+
+  // No account set as the default
+  controller.GetSelectedAccount(base::BindLambdaForTesting(
+      [&](const absl::optional<std::string>& account) {
+        EXPECT_EQ(absl::nullopt, account);
+      }));
+  base::RunLoop().RunUntilIdle();
+
+  // Setting account to a valid address works
+  controller.SetSelectedAccount(
+      second_account,
+      base::BindLambdaForTesting([&](bool success) { EXPECT_TRUE(success); }));
+  base::RunLoop().RunUntilIdle();
+  controller.GetSelectedAccount(base::BindLambdaForTesting(
+      [&](const absl::optional<std::string>& account) {
+        EXPECT_TRUE(account.has_value());
+        if (account.has_value()) {
+          EXPECT_EQ(second_account, *account);
+        }
+      }));
+  base::RunLoop().RunUntilIdle();
+
+  // Setting account to a non-existing account doesn't work
+  controller.SetSelectedAccount(
+      "0xf83C3cBfF68086F276DD4f87A82DF73B57b21559",
+      base::BindLambdaForTesting([&](bool success) { EXPECT_FALSE(success); }));
+  base::RunLoop().RunUntilIdle();
+  controller.GetSelectedAccount(base::BindLambdaForTesting(
+      [&](const absl::optional<std::string>& account) {
+        EXPECT_TRUE(account.has_value());
+        if (account.has_value()) {
+          EXPECT_EQ(second_account, *account);
+        }
+      }));
+  base::RunLoop().RunUntilIdle();
+
+  // Can set account for imported account
+  controller.Unlock(
+      "brave", base::BindOnce(&KeyringControllerUnitTest::GetBooleanCallback,
+                              base::Unretained(this)));
+  std::string imported_account;
+  controller.ImportAccount(
+      "Best Evil Son",
+      "d118a12a1e3b595d7d9e5599370df4ddc58d246a3ae4a795597e50eb6a32afb5",
+      base::BindLambdaForTesting([&](bool success, const std::string& address) {
+        EXPECT_TRUE(success);
+        imported_account = address;
+      }));
+  base::RunLoop().RunUntilIdle();
+  controller.Lock();
+  EXPECT_TRUE(controller.IsLocked());
+  controller.SetSelectedAccount(
+      imported_account,
+      base::BindLambdaForTesting([&](bool success) { EXPECT_TRUE(success); }));
+  base::RunLoop().RunUntilIdle();
+  controller.GetSelectedAccount(base::BindLambdaForTesting(
+      [&](const absl::optional<std::string>& account) {
+        EXPECT_TRUE(account.has_value());
+        if (account.has_value()) {
+          EXPECT_EQ(imported_account, *account);
+        }
+      }));
+  base::RunLoop().RunUntilIdle();
+
+  // Can set hardware account
+  std::vector<mojom::HardwareWalletAccountPtr> new_accounts;
+  std::string hardware_account = "0x1111111111111111111111111111111111111111";
+  new_accounts.push_back(mojom::HardwareWalletAccount::New(
+      hardware_account, "m/44'/60'/1'/0/0", "name 1", "Ledger"));
+  controller.AddHardwareAccounts(std::move(new_accounts));
+  base::RunLoop().RunUntilIdle();
+  controller.SetSelectedAccount(
+      hardware_account,
+      base::BindLambdaForTesting([&](bool success) { EXPECT_TRUE(success); }));
+  base::RunLoop().RunUntilIdle();
+  controller.GetSelectedAccount(base::BindLambdaForTesting(
+      [&](const absl::optional<std::string>& account) {
+        EXPECT_TRUE(account.has_value());
+        if (account.has_value()) {
+          EXPECT_EQ(hardware_account, *account);
+        }
+      }));
+  base::RunLoop().RunUntilIdle();
+}
+
 }  // namespace brave_wallet
