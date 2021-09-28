@@ -173,7 +173,7 @@ def execute(argv, env=os.environ): # pylint: disable=dangerous-default-value
         # pylint: disable=consider-using-with
         process = subprocess.Popen(
           argv, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-          universal_newlines=True)
+          encoding='utf-8', universal_newlines=True)
         stdout, stderr = process.communicate()
         if is_verbose_mode():
             print(stdout)
