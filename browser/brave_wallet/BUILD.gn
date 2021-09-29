@@ -57,9 +57,7 @@ source_set("brave_wallet") {
 }
 
 source_set("brave_wallet_delegate") {
-  sources = [
-    "brave_wallet_service_delegate_helper.cc",
-  ]
+  sources = [ "brave_wallet_service_delegate_helper.cc" ]
   deps = [
     "//brave/components/brave_wallet/browser",
     "//content/public/browser",

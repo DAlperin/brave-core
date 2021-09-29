@@ -9,7 +9,6 @@
 
 #include "base/base64.h"
 #include "base/bind_post_task.h"
-#include "base/build_config.h"
 #include "base/json/json_reader.h"
 #include "base/threading/sequenced_task_runner_handle.h"
 #include "brave/browser/brave_wallet/keyring_controller_factory.h"

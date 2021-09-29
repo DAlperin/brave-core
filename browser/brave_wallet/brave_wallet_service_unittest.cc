@@ -60,8 +60,7 @@ class BraveWalletServiceUnitTest : public testing::Test {
     builder.SetPrefService(std::move(prefs));
     profile_ = builder.Build();
     service_.reset(new BraveWalletService(
-        BraveWalletServiceDelegate::Create(profile_.get()),
-        GetPrefs()));
+        BraveWalletServiceDelegate::Create(profile_.get()), GetPrefs()));
 
     auto* registry = ERCTokenRegistry::GetInstance();
     std::vector<mojom::ERCTokenPtr> input_erc_tokens;
