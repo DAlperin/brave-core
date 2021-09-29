@@ -9,6 +9,7 @@
 
 #include "base/base64.h"
 #include "base/bind_post_task.h"
+#include "base/build_config.h"
 #include "base/json/json_reader.h"
 #include "base/threading/sequenced_task_runner_handle.h"
 #include "brave/browser/brave_wallet/keyring_controller_factory.h"
@@ -382,6 +383,16 @@ void BraveWalletServiceDelegateImpl::ResetEthereumPermission(
       permissions::BraveEthereumPermissionContext::ResetEthereumPermission(
           context_, origin_spec, account);
   std::move(callback).Run(success);
+}
+
+// static
+std::unique_ptr<BraveWalletServiceDelegate> BraveWalletProviderDelegate::Create(
+    content::BrowserContext* browser_context) {
+#if defined(OS_ANDROID)
+  return std::make_unique<BraveWalletServiceDelegate>(),
+#else
+  return std::make_unique<BraveWalletServiceDelegateImpl>(browser_context),
+#endif
 }
 
 }  // namespace brave_wallet
