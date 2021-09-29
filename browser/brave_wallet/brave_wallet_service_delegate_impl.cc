@@ -17,6 +17,7 @@
 #include "brave/components/brave_wallet/browser/keyring_controller.h"
 #include "brave/components/brave_wallet/browser/password_encryptor.h"
 #include "brave/components/permissions/contexts/brave_ethereum_permission_context.h"
+#include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
 #include "extensions/browser/api/storage/backend_task_runner.h"
 #include "extensions/browser/api/storage/storage_frontend.h"
@@ -383,16 +384,6 @@ void BraveWalletServiceDelegateImpl::ResetEthereumPermission(
       permissions::BraveEthereumPermissionContext::ResetEthereumPermission(
           context_, origin_spec, account);
   std::move(callback).Run(success);
-}
-
-// static
-std::unique_ptr<BraveWalletServiceDelegate> BraveWalletProviderDelegate::Create(
-    content::BrowserContext* browser_context) {
-#if defined(OS_ANDROID)
-  return std::make_unique<BraveWalletServiceDelegate>(),
-#else
-  return std::make_unique<BraveWalletServiceDelegateImpl>(browser_context),
-#endif
 }
 
 }  // namespace brave_wallet
